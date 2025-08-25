@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Real ou Feiki?</title>
+  <link rel="icon" type="image/png" href="assets/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="shortcut icon" href="assets/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+  <link rel="manifest" href="assets/site.webmanifest" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0b1220;
+      --text: #e6edf7;
+      --accent1: #0f114f;
+      --accent2: #1a1d70;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+      background: radial-gradient(1200px 600px at 10% -10%, #12213f 0%, #0b1220 50%) no-repeat, #0b1220;
+      background-attachment: fixed;
+      color: var(--text);
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .container img {
+      max-width: 300px;
+      margin-top: 150px;
+      margin-bottom: 150px;
+    }
+
+    button {
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      border: none;
+      padding: 14px 40px;
+      border-radius: 999px; /* pill style */
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    button:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, var(--accent2), var(--accent1));
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button onclick="window.location.href='multi.html'">MULTI</button>
+    <img src="assets/realoufake.png" alt="Imagem central">
+    <button onclick="window.location.href='vrf.html'">VRF</button>
+  </div>
+
+  <footer>
+    <img src="assets/logo.png" alt="Minha imagem" style="max-width: 50px;">
+  </footer>
+
+</body>
+</html>
