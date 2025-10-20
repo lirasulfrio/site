@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Real ou Feiki?</title>
+  <title>Calculadora Sulfrio</title>
   <link rel="icon" type="image/png" href="assets/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="shortcut icon" href="assets/favicon.ico" />
@@ -39,8 +39,7 @@
 
     .container img {
       max-width: 300px;
-      margin-top: 150px;
-      margin-bottom: 150px;
+      margin-bottom: 35px;
     }
 
     button {
@@ -56,6 +55,7 @@
       letter-spacing: 1px;
       transition: all 0.3s ease;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      width: 140px;
     }
     button:hover {
       transform: translateY(-3px);
@@ -73,12 +73,18 @@
   </style>
 </head>
 <body>
-
-  <div class="container">
+  <div style="margin-top: 25px" class="container">
     <button onclick="window.location.href='multi.html'">MULTI</button>
     <img src="assets/realoufake.png" alt="Imagem central">
     <button onclick="window.location.href='vrf.html'">VRF</button>
   </div>
+
+    <div class="container">
+    <button style="min-width:325px; margin-top: 10px;" onclick="window.location.href='proj.html'">Diárias Projeto</button>
+
+    <button style="min-width:325px; margin-top: 10px;" onclick="window.location.href='tecnicos.html'">Dados dos Técnicos</button>
+  </div>
+
 
   <footer>
     <img src="assets/logo.png" alt="Minha imagem" style="max-width: 50px;">
