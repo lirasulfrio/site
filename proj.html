@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Diárias Projetos</title>
+  <link rel="icon" type="image/png" href="assets/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="shortcut icon" href="assets/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  <style>
+    :root {
+      --bg: #0b1220;
+      --card: #121a2b;
+      --muted: #7e8aa1;
+      --text: #e6edf7;
+      --accent: #79c0ff;
+      --good: #3fb950;
+      --warn: #d29922;
+      --bad: #f85149;
+    }
+    body {
+      margin: 0; padding: 24px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto;
+      background: radial-gradient(1200px 600px at 10% -10%, #12213f 0%, #0b1220 50%) no-repeat, #0b1220;
+      color: var(--text);
+    }
+    h1 { text-align:center; font-size:28px; margin-bottom:8px; }
+    p  { text-align:center; color: var(--muted); margin:0 0 12px; }
+
+    .app { max-width:1080px; margin:0 auto; display:grid; gap:16px; grid-template-columns:1.2fr 1fr; }
+    .card { background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+            border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:12px;
+            box-shadow:0 6px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05);}    
+    .full { grid-column:1 / -1; }
+    label { font-weight:600; display:block; margin-bottom:4px; font-size:14px; }
+    input, select {
+      width:100%; padding:8px 10px; border-radius:10px;
+      border:1px solid rgba(255,255,255,0.12); background:#0d1527; color:var(--text);
+      font-size:15px; outline:none;
+    }
+    .pill-group { display:flex; gap:6px; flex-wrap:wrap; }
+    .pill { padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.14);
+            cursor:pointer; color:var(--muted); font-size:14px; }
+    .pill input { display:none; }
+    .pill.active { border-color:var(--accent); color:var(--text); box-shadow:0 0 0 2px rgba(121,192,255,0.2) inset; }
+    button { padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.14);
+             background:linear-gradient(180deg, #184a78, #103659); color:white; font-weight:600; cursor:pointer; }
+    button.secondary { background:#0f1b33; }
+    table { width:100%; border-collapse:collapse; }
+    th,td { padding:8px 10px; border-bottom:1px dashed rgba(255,255,255,0.08); text-align:left; }
+    th { color:var(--muted); }
+    .muted { color:var(--muted); }
+    .table-input { width:100%; box-sizing:border-box; padding:6px 8px; border-radius:6px; font-size:14px; }
+    .inline-btn { padding:4px 8px; font-size:13px; border-radius:6px; background:#F98A25; color:#000; border:none; cursor:pointer; }
+
+.rodape {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+  </style>
+</head>
+<body>
+  <h1>Calculadora de Diárias de Projetos</h1>
+  <p style=color:#0b1220>A Glória é de Deus</p>
+
+  <div class="app">
+    <!-- Configurações -->
+    <div class="card">
+      <div style="display:grid; grid-template-columns: repeat(2,1fr); gap:8px; align-items:center;">
+        <div>
+          <label style=margin-bottom:10px>Tipo de Projeto</label>
+          <div id="tipoProjeto" class="pill-group">
+            <label class="pill"><input type="radio" name="projeto" value="Apartamento" checked>Apartamento</label><br>
+            <label class="pill"><input type="radio" name="projeto" value="Casa">Casa</label>
+            <label class="pill"><input type="radio" name="projeto" value="Corporativo">Corporativo</label>
+          </div>
+        </div>
+
+        <div style="padding-left:50px">
+          <label style=margin-bottom:10px>Localidade</label>
+          <div id="localidade" class="pill-group">
+            <label class="pill"><input type="radio" name="local" value="Capital" checked>Capital</label>
+            <label class="pill"><input type="radio" name="local" value="Interior">Interior/Litoral</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultado -->
+    <div class="card" style="position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <label>Resultado</label>
+        <div style="min-width:160px; text-align:right;">
+          <label>As Built?</label>
+          <div id="asBuilt" class="pill-group" style="justify-content:flex-end;">
+            <label class="pill"><input type="radio" name="asbuilt" value="Sim">Sim</label>
+            <label class="pill"><input type="radio" name="asbuilt" value="Não" checked>Não</label>
+          </div>
+        </div>
+      </div>
+      <div id="resultado" style="min-height:50px; margin-top:8px;" class="muted">— Sem resultados ainda —</div>
+    </div>
+
+    <!-- Lista de Ambientes -->
+    <div class="card full">
+      <label>Adicionar Ambiente</label>
+      <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-bottom:12px;">
+        <input style=max-width:300px type="text" id="ambiente" placeholder="Nome do ambiente" />
+        <input style=max-width:300px type="number" id="area" placeholder="Área (m²)" />
+        <select style=max-width:320px id="calc">
+          <option value="700">700</option>
+          <option value="1000" selected>1000</option>
+        </select>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-bottom:12px;">
+        <select style=max-width:321px id="pd">
+          <option value="Não" selected>P.D. Normal</option>
+          <option value="Sim">P.D. Duplo</option>
+        </select>
+        <input style=max-width:300px type="number" id="ocupacao" placeholder="Ocupação" />
+        <select style=max-width:320px id="tipoEvap">
+          <option value="Dutado" selected>Dutado</option>
+          <option value="Hi Wall">Hi Wall</option>
+          <option value="K7 1via">K7 1via</option>
+          <option value="K7 4vias">K7 4vias</option>
+          <option value="Piso Teto">Piso Teto</option>
+        </select>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button id="btnAdd">Adicionar Ambiente</button>
+        <button id="btnLimpar" class="secondary">Limpar Lista</button>
+      </div>
+    </div>
+
+    <!-- Detalhes -->
+    <div class="card full">
+      <label>Detalhes</label>
+      <div id="detalhes" class="muted">Adicione ambientes para ver os cálculos.</div>
+    </div>
+  </div>
+
+<script>
+const state = {
+  projeto: "Apartamento",
+  local: "Capital",
+  asbuilt: "Não",
+  ambientes: [],
+  lastCalc: 1000,
+  lastTipoEvap: "Dutado"
+};
+
+function fmt(n){ return Number(n).toLocaleString("pt-BR"); }
+
+function getSelections(){
+  const proj = document.querySelector("input[name=projeto]:checked");
+  const loc = document.querySelector("input[name=local]:checked");
+  const asb = document.querySelector("input[name=asbuilt]:checked");
+  if(proj) state.projeto = proj.value;
+  if(loc) state.local = loc.value;
+  if(asb) state.asbuilt = asb.value;
+}
+
+function syncPills(group){
+  group.querySelectorAll('input[type=radio]').forEach(input=>{
+    const pill = input.closest('.pill');
+    if(!pill) return;
+    if(input.checked) pill.classList.add('active'); else pill.classList.remove('active');
+  });
+}
+
+function setupPills(){
+  document.querySelectorAll('.pill-group').forEach(group=>{
+    group.querySelectorAll('input[type=radio]').forEach(inp=>{
+      inp.addEventListener('change', ()=>{
+        syncPills(group);
+        getSelections();
+        recalc();
+      });
+    });
+    syncPills(group);
+  });
+}
+setupPills();
+
+document.querySelectorAll("input[name=projeto], input[name=local], input[name=asbuilt]").forEach(el=>{
+  el.addEventListener("change", ()=>{ getSelections(); recalc(); });
+});
+
+function addAmbiente(){
+  getSelections();
+  const nome = document.getElementById("ambiente").value.trim();
+  const area = Number(document.getElementById("area").value);
+  const calc = Number(document.getElementById("calc").value);
+  const pd = document.getElementById("pd").value || "Não";
+  const ocup = Number(document.getElementById("ocupacao").value) || 0;
+  const tipoEvap = document.getElementById("tipoEvap").value || "Dutado";
+
+
+  state.ambientes.push({nome, area, calc, pd, ocup, tipoEvap});
+
+  state.lastCalc = calc;
+  state.lastTipoEvap = tipoEvap;
+
+  document.getElementById("ambiente").value = "";
+  document.getElementById("area").value = "";
+  document.getElementById("ocupacao").value = "";
+  document.getElementById("pd").value = "Não";
+
+  document.getElementById("calc").value = state.lastCalc;
+  document.getElementById("tipoEvap").value = state.lastTipoEvap;
+
+  recalc();
+}
+
+document.getElementById("btnAdd").addEventListener("click", addAmbiente);
+
+document.addEventListener("keydown", e=>{
+  if(e.key==="Enter"){
+    const areaInput = document.getElementById("area");
+    if(document.activeElement===areaInput || document.activeElement===document.getElementById("ambiente") || document.activeElement===document.getElementById("ocupacao")){
+      e.preventDefault();
+      addAmbiente();
+    }
+  }
+});
+
+document.getElementById("btnLimpar").addEventListener("click", ()=>{
+  state.ambientes = [];
+  recalc();
+});
+
+function recalc(){
+  getSelections();
+  const res = document.getElementById("resultado");
+  const det = document.getElementById("detalhes");
+
+  if(state.ambientes.length===0){
+    res.innerHTML = "<span class='muted'>— Sem resultados ainda —</span>";
+    det.innerHTML = "<span class='muted'>Adicione ambientes para ver os cálculos.</span>";
+    return;
+  }
+
+  let htmlTable = "<table><tr><th>Ambiente</th><th>Área</th><th>P.D. Duplo?</th><th>Ocupação</th><th>Cálculo</th><th>BTU/h</th><th>TR</th><th>HP</th><th>M²/TR</th><th>Tipo</th><th></th></tr>";
+  let somaDut = 0, somaApar = 0;
+
+  state.ambientes.forEach((a,i)=>{
+    let cap = a.area * a.calc + (a.ocup||0)*500;
+    if(a.pd==="Sim") cap *= 1.3;
+    cap *= (state.local==="Capital"? 1.0 : 1.15);
+    const tr = cap/12000;
+    const hp = cap/9600;
+    const m2tr = a.area / (tr||1);
+    const m2hp = a.area / (hp||1);
+
+    htmlTable += `<tr>
+      <td><input class="table-input" type="text" onchange="updateField(${i},'nome',this.value)" value="${a.nome?escapeHtml(a.nome):''}"></td>
+      <td><input style=width:75px class="table-input" type="number" onchange="updateField(${i},'area',this.value)" value="${a.area}"></td>
+      <td>
+        <select style=width:75px class="table-input" onchange="updateField(${i},'pd',this.value)">
+          <option value="Não" ${a.pd!=='Sim'?'selected':''}>Não</option>
+          <option value="Sim" ${a.pd==='Sim'?'selected':''}>Sim</option>
+        </select>
+      </td>
+      <td><input style=width:70px class="table-input" type="number" onchange="updateField(${i},'ocup',this.value)" value="${a.ocup||0}"></td>
+      <td>
+        <select style=width:70px class="table-input" onchange="updateField(${i},'calc',this.value)">
+          <option value="700" ${a.calc==700?'selected':''}>700</option>
+          <option value="1000" ${a.calc==1000?'selected':''}>1000</option>
+        </select>
+      </td>
+      <td style=max-width:90px>${fmt(cap)}</td>
+      <td style=max-width:90px>${tr.toFixed(2)}</td>
+      <td style=max-width:90px>${hp.toFixed(2)}</td>
+      <td style=max-width:90px>${m2tr.toFixed(2)}</td>
+      <td>
+        <select style=width:100px class="table-input" onchange="updateField(${i},'tipoEvap',this.value)">
+          <option value="Dutado" ${a.tipoEvap==='Dutado'?'selected':''}>Dutado</option>
+          <option value="Hi Wall" ${a.tipoEvap==='Hi Wall'?'selected':''}>Hi Wall</option>
+          <option value="K7 1via" ${a.tipoEvap==='K7 1via'?'selected':''}>K7 1via</option>
+          <option value="K7 4vias" ${a.tipoEvap==='K7 4vias'?'selected':''}>K7 4vias</option>
+          <option value="Piso Teto" ${a.tipoEvap==='Piso Teto'?'selected':''}>Piso Teto</option>
+        </select>
+      </td>
+      <td>
+	<div style=width:55px>
+      <button style="background-color:#1A84C9; width:25px" class="inline-btn" onclick="copyAmb(${i})">
+        <i class="fa-regular fa-copy"></i>
+      </button>
+      <button class="inline-btn" onclick="removeAmb(${i})">X</button>
+	</div>
+      </td>
+    </tr>`;
+
+    if(a.tipoEvap==="Dutado"){
+      somaDut += (state.projeto==="Corporativo"? tr/7 : tr/10);
+    }else{
+      somaApar += (state.projeto==="Corporativo"? tr/11 : tr/16);
+    }
+  });
+
+  htmlTable += "</table>";
+  det.innerHTML = htmlTable;
+
+  let dias = somaDut + somaApar * 1.4;
+  dias *= (state.asbuilt==="Sim"? 1.3 : 1.0);
+  dias += (state.projeto==="Casa"? 1 : 0);
+  dias = Math.ceil(dias);
+
+  res.innerHTML = `
+    <strong>Estimativa de Diárias:</strong> <strong style="color:#F98A25">${dias}</strong><br>
+    <strong>Estimativa de Hora Útil:</strong> <strong>${dias*8}</strong>
+  `;
+}
+
+function copyAmb(i){
+  const clone = {...state.ambientes[i]}; // clona o ambiente
+  state.ambientes.push(clone); // adiciona ao final da lista
+  recalc(); // recalcula e atualiza a tabela
+}
+
+
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/\"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function updateField(i, field, value){
+  if(field==="area" || field==="ocup" || field==="calc"){
+    value = Number(value) || 0;
+  }
+  if(field==="pd" && !value) value = "Não";
+  if(field==="tipoEvap" && !value) value = "Dutado";
+  state.ambientes[i][field] = value;
+  recalc();
+}
+
+function removeAmb(i){
+  state.ambientes.splice(i,1);
+  recalc();
+}
+
+recalc();
+</script>
+<br>
+  <footer class="rodape">
+    <img src="assets/logo.png" alt="logo sulfrio" style="max-width: 50px;">
+  </footer>
+</body>
+</html>

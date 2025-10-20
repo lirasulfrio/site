@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Equipes Técnicas</title>
+  <link rel="icon" type="image/png" href="assets/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="shortcut icon" href="assets/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+  <link rel="manifest" href="assets/site.webmanifest" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0b1220; --text:#e6edf7; --accent1:#0f114f; --accent2:#1a1d70; --success:#28a745; --danger:#e03a3a;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:
+      radial-gradient(1200px 600px at 10% -10%, #12213f 0%, #0b1220 50%) no-repeat,var(--bg);color:var(--text);padding:24px}
+    h1{text-align:center;margin:0 0 18px}
+    #msg{max-width:1000px;margin:0 auto 12px;padding:10px;border-radius:8px;background:#0f1724;color:#cfe3ff}
+
+    /* Container com grid de 2 colunas (fechado) */
+    #teams {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 16px;
+      max-width:1000px;
+      margin: 12px auto;
+    }
+
+    .team{border-radius:10px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.5);background:transparent}
+    .team-header{
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+      padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:18px;
+    }
+    .team-header .name{flex:1}
+    .caret{opacity:.9;margin-left:12px}
+    .team-content{display:none;background:#0f1626;padding:16px 18px;color:var(--text)}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .info-cell{background:rgba(255,255,255,0.03);padding:10px;border-radius:8px}
+    .top-actions{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    .copy-btn{
+      background:linear-gradient(135deg,var(--accent1),var(--accent2));
+      color:#fff;border:2px solid #041833;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:700;
+      transition:all .18s ease;
+    }
+    .copy-btn.success{border-color:var(--success); box-shadow:0 6px 18px rgba(40,167,69,0.12)}
+    .copy-btn.error{border-color:var(--danger); box-shadow:0 6px 18px rgba(224,58,58,0.12)}
+    .technicians{margin-top:6px}
+    .technician{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:10px}
+    .technician strong{display:block;margin-bottom:6px}
+
+    /* Quando a equipe estiver expandida, ocupa toda a linha do grid */
+    .team.expanded {
+      grid-column: 1 / -1;
+    }
+
+    /* responsividade */
+    @media (max-width:640px){
+      .info-grid{grid-template-columns:1fr}
+      #teams { grid-template-columns: 1fr; }
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Equipes Técnicas</h1>
+<br>
+<br>
+  <div id="teams"></div>
+
+  <!-- fallback JSON (usado se fetch falhar, ex.: file://) -->
+  <script id="fallback-data" type="application/json">
+  [
+    {
+      "nome": "Lucas",
+      "responsavel": "Tatiane",
+      "telefone": "11 96817-4685",
+      "servicos": "Split, Multi e VRF",
+      "tecnicos": [
+        { "nome": "Leandro Alves dos Santos", "rg": "57962930-2", "cpf": "494.191.598" },
+        { "nome": "Felipe Bryan da Silva", "rg": "53.972.420-8", "cpf": "527237438/02" },
+        { "nome": "Adria Martins Carvalho", "rg": "64544070-X", "cpf": "596.205.148-31" },
+        { "nome": "Gilmar de Jesus ferreira", "rg": "50.073.681-9", "cpf": "480501868/22" },
+        { "nome": "Rafael naques da Silva", "rg": "50.455.584-4", "cpf": "434.629.978-40" },
+        { "nome": "Antonio Carlos Gonçalves Sodré", "rg": "42542296-3", "cpf": "47634361801" },
+        { "nome": "Daniel De Assis Chaves", "rg": "54.915.037-7", "cpf": "536.039.028-07" },
+        { "nome": "Bruno ortelan Viera", "rg": "43.644.531.1", "cpf": "353.570.938-57" },
+        { "nome": "Lucas de Paula Ribeiro", "rg": "44851468-0", "cpf": "36840715876" }
+      ]
+    },
+    {
+      "nome": "Henrique",
+      "responsavel": "Tatiane",
+      "telefone": "11 97059-7789",
+      "servicos": "Split, Multi e VRF",
+      "tecnicos": [
+        { "nome": "Henrique de Melo Santos", "rg": "44.404.862-5", "cpf": "327.142.348-28" },
+        { "nome": "Anderson da Silva Leite", "rg": "35.105.347-5", "cpf": "321.149.128-76" },
+        { "nome": "Wellington Aparecido Rodrigues dos Santos", "rg": "55.573.616-7", "cpf": "508.689.898-60" },
+        { "nome": "Wellington de Oliveira Gomes", "rg": "41.631.269", "cpf": "340.734.978-55" },
+        { "nome": "Danubio Henrique Chaves", "rg": "34.357.360", "cpf": "303.422.868-62" },
+        { "nome": "Jose Maria Lima dos Santos", "rg": "37.906.669-5", "cpf": "587.372.786-49" },
+        { "nome": "Clovis Eduardo Rodrigues Cardoso", "rg": "57.235.437-x", "cpf": "556.138.048-69" },
+        { "nome": "Silas de Almeida Marques", "rg": "25.528.126-0", "cpf": "131.828.558-59" },
+        { "nome": "Marcos Vinicius dos Santos", "rg": "48.616.567-x", "cpf": "402.512.148-42" },
+        { "nome": "Jose Cristiano da Silva", "rg": "44.522.464", "cpf": "353.309.758-75" },
+        { "nome": "Leandro Assunção Cabral", "rg": "46.703.615-9", "cpf": "24174713880" }
+      ]
+    },
+{
+    "nome": "Mauro",
+    "responsavel": "Tatiane",
+    "telefone": "11 94715-0499",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "José Mauro Mazzi",
+        "rg": "27.732.625-4",
+        "cpf": "263.877.988-17"
+      },
+      {
+        "nome": "Luiz Gustavo da Silva Moreno",
+        "rg": "50.356.526-X",
+        "cpf": null
+      },
+      {
+        "nome": "Rogério Messias dos Santos",
+        "rg": "44.871.682-3",
+        "cpf": null
+      },
+      {
+        "nome": "João Márcio Mazzi",
+        "rg": "20.482.825-9",
+        "cpf": "008.220.298-79"
+      },
+      {
+        "nome": "Lucas Silva Santana",
+        "rg": "54.883.939-6",
+        "cpf": "485.086.548-80"
+      },
+      {
+        "nome": "Marco Antonio Pereira Nunes",
+        "rg": "58.532.953-9",
+        "cpf": "000.690.180-81"
+      },
+      {
+        "nome": "Daniel Sena Piccinato Mazzi",
+        "rg": "67.184.223-7",
+        "cpf": "594.524.438-47"
+      }
+    ]
+  },
+  {
+    "nome": "Conrado",
+    "responsavel": "Tatiane",
+    "telefone": "11 93246-5932",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "Conrado Correia de Almeida Silva",
+        "rg": "65765986-1",
+        "cpf": "073.604.775-14"
+      },
+      {
+        "nome": "Deivisson Da Silva Santos",
+        "rg": "53.193.410-X",
+        "cpf": "497.658.058/02"
+      },
+      {
+        "nome": "Luis Manuel",
+        "rg": null,
+        "cpf": "244.270.858-22"
+      },
+      {
+        "nome": "Edesson de Jesus dos Santos",
+        "rg": "52843324-6",
+        "cpf": "47757900808"
+      }
+    ]
+  },
+  {
+    "nome": "Andre Pintor",
+    "responsavel": "Carolina",
+    "telefone": "11 94791-5374",
+    "servicos": "Pintura",
+    "tecnicos": [
+      {
+        "nome": "André de jesus santos",
+        "rg": "25864653",
+        "cpf": "15206954896"
+      }
+    ]
+  },
+  {
+    "nome": "Silas",
+    "responsavel": "Tatiane",
+    "telefone": "11 98205-9880",
+    "servicos": "Split, Multi",
+    "tecnicos": [
+      {
+        "nome": "Silas de Almeida Marques",
+        "rg": "225281260",
+        "cpf": "13182855859"
+      },
+      {
+        "nome": "Carlos clei Pereira",
+        "rg": "20.083.817-9",
+        "cpf": "14181001881"
+      }
+    ]
+  },
+  {
+    "nome": "Cris",
+    "responsavel": "Tatiane",
+    "telefone": "11 95800-3075",
+    "servicos": "Split, Multi",
+    "tecnicos": [
+      {
+        "nome": "Cristiano Roger Camilo",
+        "rg": "40.602.341-4",
+        "cpf": "359273688-40"
+      }
+    ]
+  },
+  {
+    "nome": "Gama",
+    "responsavel": "Tatiane",
+    "telefone": "11 94793-8759",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "Danilo gama de souza",
+        "rg": "448170462",
+        "cpf": "37234302875"
+      },
+      {
+        "nome": "Anderson Cordeiro Silva",
+        "rg": "474846763",
+        "cpf": "37654372809"
+      },
+      {
+        "nome": "Fabio Pereira da Silva",
+        "rg": "357288075",
+        "cpf": "23946854842"
+      },
+      {
+        "nome": "Arilson Cordeiro Silva",
+        "rg": "554434660",
+        "cpf": "50613658876"
+      },
+      {
+        "nome": "Dauton Vieira Junior",
+        "rg": "48.399.157-0",
+        "cpf": "392.594.758-21"
+      }
+    ]
+  },
+  {
+    "nome": "Danilo Sousa (DSA)",
+    "responsavel": "Tatiane",
+    "telefone": "11 98117-9835",
+    "servicos": "Split, Multi",
+    "tecnicos": [
+      {
+        "nome": "Danilo Sousa da Silva",
+        "rg": "40.015.423-7",
+        "cpf": "351.459.718-93"
+      },
+      {
+        "nome": "Raphael da Silva Batista",
+        "rg": "42.964.030",
+        "cpf": null
+      },
+      {
+        "nome": "Luis Antão Santana",
+        "rg": "56.878.469-8",
+        "cpf": "044.754.584-12"
+      },
+      {
+        "nome": "Valmir Dias de Andrade",
+        "rg": "57.377.139- X",
+        "cpf": "077.890.224-23"
+      },
+      {
+        "nome": "José Antão Santana",
+        "rg": "82.217.41",
+        "cpf": "093.340.914-10"
+      }
+    ]
+  },
+  {
+    "nome": "Evandro",
+    "responsavel": "Carolina",
+    "telefone": "11 94149-5544",
+    "servicos": "Split, Multi",
+    "tecnicos": [
+      {
+        "nome": "Fernando Timoteo Salviano",
+        "rg": "50.074.908-5",
+        "cpf": "482.364.048-97"
+      },
+      {
+        "nome": "Massato Fukuda",
+        "rg": "8426827",
+        "cpf": "01191104826"
+      },
+      {
+        "nome": "João Vitor eslan",
+        "rg": "526703957",
+        "cpf": "46075546855"
+      },
+      {
+        "nome": "Sérgio Melonia de Araújo",
+        "rg": "63404171-x",
+        "cpf": "57412378864"
+      },
+      {
+        "nome": "Matheus Faria Braga",
+        "rg": "38.452.363-8",
+        "cpf": "421.268.378-40"
+      },
+      {
+        "nome": "Evandro Souza da Silva",
+        "rg": "26784285",
+        "cpf": "16287026804"
+      },
+      {
+        "nome": "Alessandro dos santos Brito",
+        "rg": "35567219/4",
+        "cpf": "16258540805"
+      },
+      {
+        "nome": "Flavio Candido de Brito junior",
+        "rg": "43.565.620",
+        "cpf": "436.414.088-06"
+      },
+      {
+        "nome": "Raphael da Silva Batista",
+        "rg": "42.964.030-4",
+        "cpf": "378.071.088-94"
+      }
+    ]
+  },
+  {
+    "nome": "Gel",
+    "responsavel": "Carolina",
+    "telefone": "11 94742-0177",
+    "servicos": "Split, Multi",
+    "tecnicos": [
+      {
+        "nome": "Rogério Graciano Batista",
+        "rg": "33.790.982-0",
+        "cpf": "312.836.338.25"
+      },
+      {
+        "nome": "Marcos Vinicius Lopes Durizzo",
+        "rg": "466356055",
+        "cpf": "45357578877"
+      },
+      {
+        "nome": "Daniel Pereira dos Santos",
+        "rg": "55606022",
+        "cpf": "44278174837"
+      }
+    ]
+  },
+  {
+    "nome": "Gil",
+    "responsavel": "Carolina",
+    "telefone": "11 91215-7175",
+    "servicos": "Duto",
+    "tecnicos": [
+      {
+        "nome": "Jiovan Rodrigues dos Santos",
+        "rg": "38.1399-45",
+        "cpf": "560.106.305-25"
+      },
+      {
+        "nome": "Matheus Santos Silva",
+        "rg": "52.987.729-6",
+        "cpf": "432.171.858-97"
+      },
+      {
+        "nome": "Guilherme Silva Ramos",
+        "rg": "65.996.417-X",
+        "cpf": "102.092.015-76"
+      },
+      {
+        "nome": "Weslley Rodrigues Lima",
+        "rg": "57.068.495-X",
+        "cpf": "593.150.098.78"
+      },
+      {
+        "nome": "Wellington da Silva Lima",
+        "rg": "34.621.201-7",
+        "cpf": "224.714.508-65"
+      },
+      {
+        "nome": "Vilmar Geraldo dos Santos",
+        "rg": "28.247.103-0",
+        "cpf": "644.823.755-00"
+      },
+      {
+        "nome": "Franclim dos Santos e Santos",
+        "rg": "55.521.212-9",
+        "cpf": "056.833.715-89"
+      },
+      {
+        "nome": "Diego Gomes de Souza",
+        "rg": "54.726.684-4",
+        "cpf": "075.483.634-31"
+      },
+      {
+        "nome": "Gilberto Correia dos Santos",
+        "rg": "39.752.200-9",
+        "cpf": "886.266.525-34"
+      },
+      {
+        "nome": "Sandroaldo Rodrigues dos Santos",
+        "rg": "50.611.02-1",
+        "cpf": null
+      },
+      {
+        "nome": "Josevaldo Alves de Souza",
+        "rg": "53.031.822-2",
+        "cpf": null
+      }
+    ]
+  },
+  {
+    "nome": "Israel",
+    "responsavel": "Tatiane",
+    "telefone": "11 97251-4699",
+    "servicos": "Split, Multi",
+    "tecnicos": [
+      {
+        "nome": "Adolfo Henrique Fachina",
+        "rg": "413975289",
+        "cpf": "420.783.408-71"
+      },
+      {
+        "nome": "Ícaro Ramiro da Silva",
+        "rg": "577185597",
+        "cpf": null
+      },
+      {
+        "nome": "Israel do Nascimento Miranda",
+        "rg": "35370890",
+        "cpf": "339.757.598-28"
+      },
+      {
+        "nome": "Arnaelton de Souza Santos",
+        "rg": "40289359",
+        "cpf": "359.591.398-12"
+      },
+      {
+        "nome": "Herison Silva Conde",
+        "rg": "41023613",
+        "cpf": "359.702.578-18"
+      },
+      {
+        "nome": "Paulo Sergio Pereira Affonso",
+        "rg": "52134411-6",
+        "cpf": "481.880.308-13"
+      },
+      {
+        "nome": "José Clayton de Souza",
+        "rg": "33299172",
+        "cpf": "219.516.348-88"
+      }
+    ]
+  },
+  {
+    "nome": "João",
+    "responsavel": "Tatiane",
+    "telefone": "11 94777-5524",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "João Sousa de Oliveira",
+        "rg": "30.371.651",
+        "cpf": "280022648-00"
+      },
+      {
+        "nome": "Ernanes dos Santos",
+        "rg": "40.149.572",
+        "cpf": "348303618-08"
+      },
+      {
+        "nome": "Rogério Lima da Silva",
+        "rg": "47.784.042-5",
+        "cpf": "387281368-45"
+      }
+    ]
+  },
+  {
+    "nome": "Johnatas",
+    "responsavel": "Tatiane",
+    "telefone": "11 94051-9635",
+    "servicos": "Higienização",
+    "tecnicos": [
+      {
+        "nome": "Johnatas Feitoza da Silva",
+        "rg": "46.667.216-0",
+        "cpf": "36978753882"
+      },
+      {
+        "nome": "Jefferson Lopez",
+        "rg": "48452650-9",
+        "cpf": "456104478-79"
+      },
+      {
+        "nome": "Hiago Gomes de Assis",
+        "rg": "56.483.169-4",
+        "cpf": "52339457890"
+      }
+    ]
+  },
+  {
+    "nome": "Candido",
+    "responsavel": "Tatiane",
+    "telefone": "11 94014-3675",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "Jonathan Candido da Silva",
+        "rg": "44.263.795-0",
+        "cpf": "325.252.368-07"
+      },
+      {
+        "nome": "Madson Silva do Nascimento",
+        "rg": "16172942-6",
+        "cpf": "077.425.204.94"
+      },
+      {
+        "nome": "Jeferson Félix",
+        "rg": "36.054.127-6",
+        "cpf": "353.473.958-26"
+      },
+      {
+        "nome": "Wilian Pascheto",
+        "rg": "26.230.327- 9",
+        "cpf": "175.829.588-02"
+      },
+      {
+        "nome": "Mateus José Pereira da Silva",
+        "rg": "66.425.267.9",
+        "cpf": "465.460.538-02"
+      },
+      {
+        "nome": "Thomas Anderson Santos de Oliveira",
+        "rg": "52.395.913-8",
+        "cpf": "482.340.658-31"
+      }
+    ]
+  },
+  {
+    "nome": "Julio",
+    "responsavel": "Tatiane",
+    "telefone": "11 97848-9223",
+    "servicos": "Split, Multi",
+    "tecnicos": [
+      {
+        "nome": "Julio Cesar Lima da Silva",
+        "rg": "34.688.219-9",
+        "cpf": "422.665.698-99"
+      },
+      {
+        "nome": "Erik Miguel da Silva",
+        "rg": "67.404.710-2",
+        "cpf": "244.088.508.88"
+      },
+      {
+        "nome": "Gutemberg Matias Bezerra",
+        "rg": "56088113-7",
+        "cpf": "496.056.088.63"
+      },
+      {
+        "nome": "David dos Santos Silva",
+        "rg": "497225037",
+        "cpf": "50303569824"
+      }
+    ]
+  },
+  {
+    "nome": "Junior",
+    "responsavel": "Tatiane",
+    "telefone": "11 95486-3494",
+    "servicos": "Split, Multi",
+    "tecnicos": [
+      {
+        "nome": "Orlando Ferreira Reis Junior",
+        "rg": "486.182.575",
+        "cpf": "373494188-17"
+      },
+      {
+        "nome": "Everton da Silva Andrade",
+        "rg": "43311120-3",
+        "cpf": "34960858869"
+      },
+      {
+        "nome": "Jadson de Freitas tarsitano",
+        "rg": "45200413-5",
+        "cpf": "34946909877"
+      },
+      {
+        "nome": "Abner Maciel",
+        "rg": "424950029",
+        "cpf": null
+      }
+    ]
+  },
+  {
+    "nome": "Leandro",
+    "responsavel": "Tatiane",
+    "telefone": "11 95828-5960",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "Leandro da costa Macedo",
+        "rg": "48101097x",
+        "cpf": "40503141852"
+      },
+      {
+        "nome": "Raimundo Alves do nascimento",
+        "rg": "28964576-",
+        "cpf": "19073054591"
+      },
+      {
+        "nome": "Cassiano costa Silva",
+        "rg": "44046122",
+        "cpf": "425.698.288-40"
+      },
+      {
+        "nome": "Alexandro da costa macedo",
+        "rg": "45260854-5",
+        "cpf": "36812556874"
+      }
+    ]
+  },
+  {
+    "nome": "Maycon",
+    "responsavel": "Carolina",
+    "telefone": "11 4253-4021",
+    "servicos": "Duto",
+    "tecnicos": [
+      {
+        "nome": "Francolino da SIlva",
+        "rg": "29.990.305",
+        "cpf": "292.988.418-50"
+      },
+      {
+        "nome": "Mauro Alex Santos Teixeira",
+        "rg": null,
+        "cpf": "373.351.308.83"
+      },
+      {
+        "nome": "Genigefeson Aparecido do Carmo Souza",
+        "rg": "43119600",
+        "cpf": "37.401.595.885"
+      },
+      {
+        "nome": "Maxuel Cerqueira Ribeiro",
+        "rg": "43.358.452",
+        "cpf": "433.655.468-47"
+      },
+      {
+        "nome": "Dário Narciso Alves Junior",
+        "rg": "24.585.862",
+        "cpf": "829.827.326-53"
+      },
+      {
+        "nome": "Lucas Gabriel de Souza Silva",
+        "rg": "36.909.581",
+        "cpf": "425.579.898-27"
+      },
+      {
+        "nome": "Maycon Martins Prado",
+        "rg": "35.610.319",
+        "cpf": "390.350.258-81"
+      }
+    ]
+  },
+  {
+    "nome": "Marcelo",
+    "responsavel": "Carolina",
+    "telefone": "11 98686-0973",
+    "servicos": "Aquecedor",
+    "tecnicos": [
+      {
+        "nome": "Marcelo de Oliveira Louro",
+        "rg": "34.545.480-7",
+        "cpf": "297.300.878-65"
+      }
+    ]
+  },
+  {
+    "nome": "Murilo",
+    "responsavel": "Tatiane",
+    "telefone": "11 97324-2772",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "Daniel Duarte da Silva",
+        "rg": "59.747.845.4",
+        "cpf": "491.567.788-56"
+      },
+      {
+        "nome": "Fernando Cardoso dos Santos",
+        "rg": "17.112.460-1",
+        "cpf": "023.001.998-66"
+      },
+      {
+        "nome": "Gesilvado Silva Lima",
+        "rg": "34.221.722-7",
+        "cpf": "229.493.068-10"
+      },
+      {
+        "nome": "Jeandresson Rafael de Araujo Silva",
+        "rg": "57.873.601-9",
+        "cpf": "473.857.458-22"
+      },
+      {
+        "nome": "Laian Cardoso de Jesus",
+        "rg": "60.357.119-0",
+        "cpf": "473.858.158-98"
+      },
+      {
+        "nome": "Marcos Rodrigo Macena Jeremias",
+        "rg": "42.910.253-7",
+        "cpf": "390.557.538-82"
+      },
+      {
+        "nome": "Messias Lucas de Magalhães",
+        "rg": "47.834.666",
+        "cpf": "393.555.958-59"
+      },
+      {
+        "nome": "Murilo Sales Barreto de Moraes",
+        "rg": "30.658.654-X",
+        "cpf": "329.456.408-21"
+      },
+      {
+        "nome": "Mussa Ture",
+        "rg": "F360305-N",
+        "cpf": "238.809.058-00"
+      },
+      {
+        "nome": "Reynaldo Fernandes de Novais",
+        "rg": "56.132.321-5",
+        "cpf": "450.826.728-94"
+      },
+      {
+        "nome": "Rodrigo Soares Romero Taccetti",
+        "rg": "38.065.580-9",
+        "cpf": "508.714.388-10"
+      }
+    ]
+  },
+  {
+    "nome": "Natan",
+    "responsavel": "Tatiane",
+    "telefone": "11 96831-1134",
+    "servicos": "Higienização",
+    "tecnicos": [
+      {
+        "nome": "Natan Feitoza da Silva",
+        "rg": "48178848-7",
+        "cpf": "415.965.348.00"
+      },
+      {
+        "nome": "João Paulo Guimarães",
+        "rg": "37.974.626-8",
+        "cpf": "334.600.768.52"
+      }
+    ]
+  },
+  {
+    "nome": "Ramerson",
+    "responsavel": "Tatiane",
+    "telefone": "11 94762-2399",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "Ramerson Mayel Xavier Ferreira",
+        "rg": "33.488.501-2",
+        "cpf": "318.112.798-13"
+      },
+      {
+        "nome": "Wilson de Souza Cruz",
+        "rg": "43.461.873-1",
+        "cpf": "446.186.148-11"
+      },
+      {
+        "nome": "Vitor Alex de Almeida Sousa",
+        "rg": "33.488.501-2",
+        "cpf": "318.112.798-13"
+      },
+      {
+        "nome": "Pedro Henrique Martins Ferreira",
+        "rg": "54.360.875-X",
+        "cpf": "501.681.378-79"
+      },
+      {
+        "nome": "Anderson Felipe Vicente de Lima",
+        "rg": "52.633.139-2",
+        "cpf": "503.730.538.-19"
+      },
+      {
+        "nome": "Wesley da Silva Mascarenhas",
+        "rg": "66.379.114-5",
+        "cpf": "547.382.168-56"
+      },
+      {
+        "nome": "Flávio Candido de Brito Junior",
+        "rg": "43.565.620-X",
+        "cpf": "436.414.088-06"
+      }
+    ]
+  },
+  {
+    "nome": "Reginaldo",
+    "responsavel": "Tatiane",
+    "telefone": "11 97767-4611",
+    "servicos": "Split, Multi",
+    "tecnicos": [
+      {
+        "nome": "Reginaldo Amaral Caparroz",
+        "rg": "25.725.657-x",
+        "cpf": "253.718.758-08"
+      },
+      {
+        "nome": "Luciano Nunes de Oliveira",
+        "rg": "468554841",
+        "cpf": null
+      },
+      {
+        "nome": "David dos Santos Silva",
+        "rg": "49722503-7",
+        "cpf": "403.035.698-24"
+      }
+    ]
+  },
+  {
+    "nome": "Ricardo Pintor",
+    "responsavel": "Carolina",
+    "telefone": "11 99761-4230",
+    "servicos": "Pintura",
+    "tecnicos": [
+      {
+        "nome": "Ricardo zuzarte da Silva",
+        "rg": "44.217.125-0",
+        "cpf": "350.313.898-69"
+      }
+    ]
+  },
+  {
+    "nome": "Sidinei",
+    "responsavel": "Tatiane",
+    "telefone": "11 96333-2179",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "Marcos Rodrigues da Silva",
+        "rg": "26.104.199-X",
+        "cpf": "261.435.038-93"
+      },
+      {
+        "nome": "Sidinei Gonçalves Saturno",
+        "rg": "33.618.737-3",
+        "cpf": "301.152.038-79"
+      },
+      {
+        "nome": "Tiago de Alcântara Sousa",
+        "rg": "54.776.070-x",
+        "cpf": null
+      },
+      {
+        "nome": "Raphael Girardi Figueiredo",
+        "rg": null,
+        "cpf": "42742789804"
+      },
+      {
+        "nome": "Sidnei Olimpio Inácio",
+        "rg": "16.551.625",
+        "cpf": "072.592.708-96"
+      },
+      {
+        "nome": "Janio Jesus conceicão junior",
+        "rg": "23.554.054-41",
+        "cpf": "105.872.375-89"
+      },
+      {
+        "nome": "Renivaldo Silva Conceição",
+        "rg": "20.891.752-73",
+        "cpf": "073.605.735-80"
+      },
+      {
+        "nome": "Ricardo Carvalho da Silva",
+        "rg": "24.105.164-40",
+        "cpf": "867.964.065-40"
+      },
+      {
+        "nome": "Paulo Henrique costa Marques",
+        "rg": "57675619-2",
+        "cpf": "050.915.843-90"
+      },
+      {
+        "nome": "Paulo Ricardo Costa Baltazar",
+        "rg": "53.438.743-80",
+        "cpf": "053.438.743-80"
+      },
+      {
+        "nome": "Jackson Francisco Monteiro",
+        "rg": "16.843.563-26",
+        "cpf": "867.454.945-40"
+      },
+      {
+        "nome": "Edson José Ferreira",
+        "rg": "46.157.926 -1",
+        "cpf": "484.603748-66"
+      },
+      {
+        "nome": "Dhone José Burgos da Silva",
+        "rg": "48.065.914-X",
+        "cpf": "319.307.248-61"
+      },
+      {
+        "nome": "Guilherme Aparecido Leite Aguiar",
+        "rg": "52.821.184-5",
+        "cpf": "491.361.918-76"
+      }
+    ]
+  },
+  {
+    "nome": "Washington",
+    "responsavel": "Carolina",
+    "telefone": "11 94763-4097",
+    "servicos": "Split, Multi, VRF",
+    "tecnicos": [
+      {
+        "nome": "João Vitor Rodrigues da Silva",
+        "rg": "38.375.024-6",
+        "cpf": "501.007.848-10"
+      },
+      {
+        "nome": "Lainie Rodrigues da Silva",
+        "rg": "44.116.786-x",
+        "cpf": "413.344.848-05"
+      },
+      {
+        "nome": "Washington Curtolo Ferreira",
+        "rg": "15.652.661-x",
+        "cpf": "251215348-76"
+      },
+      {
+        "nome": "Thiago Oliveira",
+        "rg": "47.901.610-0",
+        "cpf": null
+      }
+    ]
+  },
+  {
+    "nome": "Luiz Miro",
+    "responsavel": "Carolina",
+    "telefone": "11 94771-9706",
+    "servicos": "Duto",
+    "tecnicos": [
+      {
+        "nome": "Everton de Sousa pinto",
+        "rg": "35.154.025-8",
+        "cpf": "303.108.868-99"
+      },
+      {
+        "nome": "Valdimiro Antônio de Sousa",
+        "rg": "7.473.385-0",
+        "cpf": "103.514.578-28"
+      },
+      {
+        "nome": "Luiz Carlos de Sousa",
+        "rg": "42.856.246-2",
+        "cpf": "314.523.838-80"
+      }
+    ]
+  },
+ {
+    "nome": "Sulfrio",
+    "responsavel": "Carolina",
+    "telefone": "11 97855-3252",
+    "servicos": "Sim",
+    "tecnicos": [
+      {
+        "nome": "Rogerio Martinez Ferrete",
+        "rg": "19.103.194X",
+        "cpf": "130.200.238-40"
+      },
+      {
+        "nome": "Pedro Augusto Hernández Kouyomdjian",
+        "rg": "39.591.327-5",
+        "cpf": "369.785.928-54"
+      },
+      {
+        "nome": "Luan Saturnino Dos Santos",
+        "rg": "52.096.552-8",
+        "cpf": "496.137.258-73"
+      }
+    ]
+  }
+  ]
+  </script>
+
+  <script>
+    (function(){
+      const msgEl = document.getElementById('msg');
+      const teamsEl = document.getElementById('teams');
+
+      async function loadFrom(url){
+        try {
+          const res = await fetch(url, {cache: 'no-store'});
+          if(!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+          console.log('Loaded', url);
+          if(msgEl) msgEl.textContent = 'Dados carregados de ' + url;
+          return data;
+        } catch (err) {
+          console.warn('Falha ao carregar', url, err);
+          return null;
+        }
+      }
+
+      async function load() {
+        // tenta nomes comuns (equipes.json ou teams.json)
+        let data = await loadFrom('equipes.json');
+        if(!data) data = await loadFrom('teams.json');
+        if(!data){
+          // fallback embutido
+          try{
+            const text = document.getElementById('fallback-data').textContent;
+            data = JSON.parse(text);
+          } catch(e){
+            if(msgEl) msgEl.textContent = 'Erro ao carregar dados.';
+            console.error(e);
+            return;
+          }
+        }
+        render(data);
+      }
+
+      function render(data){
+        teamsEl.innerHTML = '';
+        data.forEach((team, idx) => {
+          const teamWrap = document.createElement('div');
+          teamWrap.className = 'team';
+
+          // header (apenas nome)
+          const header = document.createElement('div');
+          header.className = 'team-header';
+          header.innerHTML = `<div class="name">${escapeHtml(team.nome)}</div><div class="caret">▼</div>`;
+
+          // content (inicialmente escondido)
+          const content = document.createElement('div');
+          content.className = 'team-content';
+
+          // top info grid (2 colunas)
+          const grid = document.createElement('div');
+          grid.className = 'info-grid';
+          grid.innerHTML = `
+            <div class="info-cell"><strong>Equipe:</strong><br>${escapeHtml(team.nome)}</div>
+            <div class="info-cell"><strong>Responsável agendamento:</strong><br>${escapeHtml(team.responsavel)}</div>
+            <div class="info-cell"><strong>Telefone Responsável:</strong><br>${escapeHtml(team.telefone)}</div>
+            <div class="info-cell"><strong>Serviços prestados:</strong><br>${escapeHtml(team.servicos)}</div>
+          `;
+
+          // ações topo (botão copiar)
+          const actions = document.createElement('div');
+          actions.className = 'top-actions';
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.type = 'button';
+          copyBtn.textContent = 'Copiar técnicos';
+          actions.appendChild(copyBtn);
+
+          // lista técnicos (visual)
+          const techsWrap = document.createElement('div');
+          techsWrap.className = 'technicians';
+          team.tecnicos.forEach(t => {
+            const tEl = document.createElement('div');
+            tEl.className = 'technician';
+            tEl.innerHTML = `<strong>${escapeHtml(t.nome)}</strong>RG: ${escapeHtml(t.rg)}<br>CPF: ${escapeHtml(t.cpf)}`;
+            techsWrap.appendChild(tEl);
+          });
+
+          // evento toggle abrir/fechar (fecha todos e abre só o selecionado)
+          header.addEventListener('click', () => {
+            const isOpen = content.style.display === 'block';
+
+            // fecha todos
+            document.querySelectorAll('.team').forEach(t => {
+              t.classList.remove('expanded');
+              const c = t.querySelector('.team-content');
+              if(c) c.style.display = 'none';
+              const caret = t.querySelector('.caret');
+              if(caret) caret.textContent = '▼';
+            });
+
+            if(!isOpen){
+              content.style.display = 'block';
+              header.querySelector('.caret').textContent = '▲';
+              teamWrap.classList.add('expanded');
+            }
+          });
+
+          // copiar apenas os técnicos (texto formatado)
+          copyBtn.addEventListener('click', async (e) => {
+            e.stopPropagation(); // garantir que não dispare o toggle
+            const text = team.tecnicos.map(t => `${t.nome}\nRG: ${t.rg}\nCPF: ${t.cpf}`).join('\n\n');
+
+            const ok = await tryCopy(text);
+            if(ok){
+              copyBtn.classList.add('success');
+              setTimeout(()=>copyBtn.classList.remove('success'), 1500);
+            } else {
+              copyBtn.classList.add('error');
+              setTimeout(()=>copyBtn.classList.remove('error'), 1500);
+            }
+          });
+
+          content.appendChild(grid);
+          content.appendChild(actions);
+          content.appendChild(techsWrap);
+
+          teamWrap.appendChild(header);
+          teamWrap.appendChild(content);
+          teamsEl.appendChild(teamWrap);
+        });
+      }
+
+      // tenta Clipboard API, se falhar tenta execCommand
+      async function tryCopy(text){
+        try {
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            await navigator.clipboard.writeText(text);
+            return true;
+          }
+        } catch (e){
+          console.warn('clipboard.writeText falhou', e);
+        }
+        // fallback
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          return !!ok;
+        } catch (e){
+          console.warn('execCommand fallback falhou', e);
+          return false;
+        }
+      }
+
+      function escapeHtml(str){
+        if(!str && str !== 0) return '';
+        return String(str)
+          .replace(/&/g,'&amp;')
+          .replace(/</g,'&lt;')
+          .replace(/>/g,'&gt;')
+          .replace(/"/g,'&quot;')
+          .replace(/'/g,'&#039;');
+      }
+
+      // start
+      load();
+    })();
+  </script>
+  <footer>
+    <img src="assets/logo.png" alt="Minha imagem" style="max-width: 50px;">
+  </footer>
+<br>
+</body>
+</html>
